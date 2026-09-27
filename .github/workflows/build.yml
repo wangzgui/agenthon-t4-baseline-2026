@@ -1,0 +1,55 @@
+name: Build and publish T4 baseline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install official validator
+        run: pip install 'qfbench2-common @ git+https://github.com/Agenthon-2026/Agenthon2026-public.git@v2.4.4#subdirectory=common'
+      - name: Fetch public practice units
+        run: git clone --depth 1 https://github.com/Agenthon-2026/track4-analysis-public.git official
+      - name: Build linux/amd64 image
+        run: docker build --platform linux/amd64 -t ghcr.io/${{ github.repository }}:v1.0 .
+      - name: Check every published unit
+        run: |
+          set -euo pipefail
+          for unit in official/units/*; do
+            [ -f "$unit/task.json" ] || continue
+            mkdir -p output
+            docker run --rm --network none \
+              -v "$PWD/$unit:/input:ro" -v "$PWD/output:/output" \
+              ghcr.io/${{ github.repository }}:v1.0 \
+              analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json
+            python - "$unit" <<'PY'
+          import importlib.resources as r, json, jsonschema, sys
+          from pathlib import Path
+          schema = json.loads((r.files('qfbench2_common')/'schemas'/'analysis.schema.json').read_text())
+          answer = json.loads(Path('output/answer.json').read_text())
+          task = json.loads((Path(sys.argv[1])/'task.json').read_text())
+          jsonschema.validate(answer, schema)
+          assert answer['task_id'] == task['task_id']
+          assert len(answer['entity_predictions']) == len(task['entities'])
+          assert all(row['claims'] for row in answer['entity_predictions'])
+          PY
+            rm -f output/answer.json
+          done
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push image
+        run: docker push ghcr.io/${{ github.repository }}:v1.0
