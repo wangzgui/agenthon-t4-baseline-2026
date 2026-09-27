@@ -43,6 +43,7 @@ jobs:
           assert len(answer['entity_predictions']) == len(task['entities'])
           assert all(row['claims'] for row in answer['entity_predictions'])
           PY
+            PYTHONPATH="$PWD/official" qfbench2-smoke "$unit" "$PWD/output" --track analysis
             rm -f output/answer.json
           done
       - name: Log in to GHCR
