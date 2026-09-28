@@ -1,0 +1,5 @@
+FROM python:3.13-slim
+LABEL qfbench2.interface_version="2.0"
+WORKDIR /app
+COPY agent_s1.py /app/agent_s1.py
+ENTRYPOINT ["python", "/app/agent_s1.py"]
