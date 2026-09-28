@@ -48,7 +48,8 @@ def main(units: Path) -> None:
     assert row["point_forecast"] == 1.57
     assert row["label"] == task["target"]["labels"][0]
     assert all(claim["doc_id"] in corpus.texts for claim in row["claims"])
-    assert row["claims"][0]["span_end"] - row["claims"][0]["span_start"] == 40
+    citation = row["claims"][0]
+    assert passages[0].text[:40] in corpus.texts[citation["doc_id"]][citation["span_start"]:citation["span_end"]]
     print("PASS: House request, response, quote offsets, invalid evidence-ID rejection")
 
 

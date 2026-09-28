@@ -398,8 +398,11 @@ def make_claim(corpus: Corpus, passages: list[Passage], raw: dict) -> list[dict]
         if not corpus.valid(p):
             continue
         if 12 <= len(quote) <= 280 and quote in p.text:
-            start = p.start + p.text.index(quote)
-            end = start + len(quote)
+            quote_at = p.text.index(quote)
+            # Keep neighboring facts as NLI premise context; the quote only
+            # anchors the source passage and must occur verbatim within it.
+            start = p.start + max(0, quote_at - 120)
+            end = p.start + min(len(p.text), quote_at + len(quote) + 240)
             claim_text = quote
         else:
             start, end = p.start, p.end
