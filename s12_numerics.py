@@ -252,6 +252,7 @@ def revision_prior(entity: dict, corpus: Any) -> tuple[float, float, int] | None
     identity = str(entity.get("series_id") or entity.get("entity_id") or "")
     if not reference or not identity:
         return None
+    cutoff_day = _date(str(getattr(corpus, "cutoff", "9999-12-31")))
     candidate_docs = [(doc_id, body) for doc_id, body in corpus.texts.items()
                       if re.sub(r"[^a-z0-9]", "", identity.lower()) in
                       re.sub(r"[^a-z0-9]", "", doc_id.lower())]
@@ -265,6 +266,11 @@ def revision_prior(entity: dict, corpus: Any) -> tuple[float, float, int] | None
                 continue
             if not all(h.startswith("as_of_") for h in heads[1:]):
                 continue
+            eligible_cols = [j for j, head in enumerate(heads[1:], 1)
+                             if (vintage := _date(head.removeprefix("as_of_"))) is not None
+                             and (cutoff_day is None or vintage <= cutoff_day)]
+            if not eligible_cols:
+                continue
             rows = {}
             for raw in lines[i + 1:]:
                 if "|" not in raw:
@@ -272,7 +278,7 @@ def revision_prior(entity: dict, corpus: Any) -> tuple[float, float, int] | None
                 cells = [c.strip() for c in raw.split("|")]
                 if len(cells) != len(heads):
                     break
-                rows[cells[0]] = [number(cell) for cell in cells[1:]]
+                rows[cells[0]] = [number(cells[j]) for j in eligible_cols]
             current = rows.get(reference)
             if not current:
                 continue

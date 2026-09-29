@@ -42,11 +42,12 @@ def synthetic_history() -> None:
 
 def revision_and_threshold(units: Path) -> None:
     class Frozen:
+        cutoff = "2020-02-15"
         texts = {"SERIES_A": """reference_month | as_of_2020-01-01 | as_of_2020-02-01 | as_of_2020-03-01
-2019-09 | 10 | 12 | 14
-2019-10 | 20 | 22 | 24
-2019-11 | 30 | 32 | 34
-2019-12 | 40 | 42 | 44
+2019-09 | 10 | 12 | -999
+2019-10 | 20 | 22 | -999
+2019-11 | 30 | 32 | -999
+2019-12 | 40 | 42 | -999
 2020-01 | 50 | -- | --
 """}
     prior = revision_prior({"series_id": "SERIES_A", "ref_month": "2020-01"}, Frozen())

@@ -61,6 +61,7 @@ class Passage:
 
 class Corpus:
     def __init__(self, directory: Path, cutoff: str):
+        self.cutoff = cutoff
         self.texts: dict[str, str] = {}
         self.passages: list[Passage] = []
         for path in sorted(directory.glob("*.json")):
