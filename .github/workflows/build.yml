@@ -1,4 +1,4 @@
-name: Build and publish T4 S1.0
+name: Build and publish T4 S1.1
 
 on:
   workflow_dispatch:
@@ -23,10 +23,11 @@ jobs:
       - name: Verify public contracts and citations
         run: |
           pip install jsonschema
-          python verify_s1.py official/units
-          python test_s1_house.py official/units
+          python verify_s11.py official/units
+          python test_s11_house.py official/units
+          python test_s11_semantics.py official/units
       - name: Build linux/amd64 image
-        run: docker build --platform linux/amd64 -f Dockerfile.s1 -t ghcr.io/${{ github.repository }}:s1.0 .
+        run: docker build --platform linux/amd64 -f Dockerfile.s11 -t ghcr.io/${{ github.repository }}:s1.1 .
       - name: Check every published unit
         run: |
           set -euo pipefail
@@ -35,7 +36,7 @@ jobs:
             mkdir -p output
             docker run --rm --network none \
               -v "$PWD/$unit:/input:ro" -v "$PWD/output:/output" \
-              ghcr.io/${{ github.repository }}:s1.0 \
+              ghcr.io/${{ github.repository }}:s1.1 \
               analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json
             python - "$unit" <<'PY'
           import importlib.resources as r, json, jsonschema, sys
@@ -58,4 +59,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push image
-        run: docker push ghcr.io/${{ github.repository }}:s1.0
+        run: docker push ghcr.io/${{ github.repository }}:s1.1
