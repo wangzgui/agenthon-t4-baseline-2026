@@ -1,15 +1,20 @@
 ## Executive summary (read this first)
 
-This is a first, general-purpose Agenthon Track 4 submission. It runs the
+S1.2 is a general-purpose Agenthon Track 4 submission. It runs the
 organizer-hosted House model when available and cites passages retrieved from
-the task's frozen, cutoff-filtered corpus. The model-free fallback is for
-interface checks and House failures; it is not a reliable prediction method.
+the task's frozen, cutoff-filtered corpus. A lightweight numerical rule is
+fitted and selected from historical observations already in that corpus when
+rolling-origin validation supports it. This is a forecast prior, not a claim
+that the unpublished outcome is known. Tasks without adequate historical
+observations retain a deterministic contract-safe fallback.
 The code adapts the MIT-licensed strong RAG scaffold from the official public
 Track 4 repository, with its license copied to `UPSTREAM_LICENSE`.
 
-Build: `docker build --platform linux/amd64 -t agenthon-t4-baseline:v1.0 .`
+Build: `docker build --platform linux/amd64 -f Dockerfile.s12 -t agenthon-t4-baseline:s1.2 .`
 
-Run: `docker run --rm -v UNIT:/input:ro -v OUT:/output agenthon-t4-baseline:v1.0 analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json`
+Run: `docker run --rm -v UNIT:/input:ro -v OUT:/output agenthon-t4-baseline:s1.2 analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json`
+
+`ARTIFACT_PROVENANCE.md` records the statistical rule, cutoff checks and model disclosure.
 
 The GitHub workflow validates all published practice unit shapes on Linux and
 then publishes the image to GHCR. No Team Key is stored in this repository.
