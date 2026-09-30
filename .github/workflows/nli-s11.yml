@@ -1,8 +1,6 @@
 name: Diagnose S1.1 production NLI core
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:

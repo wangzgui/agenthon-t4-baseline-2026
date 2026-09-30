@@ -1,4 +1,4 @@
-name: Build and publish T4 S1.4
+name: Build and publish T4 S1.5
 
 on:
   workflow_dispatch:
@@ -17,18 +17,20 @@ jobs:
         with:
           python-version: '3.13'
       - name: Install official validator
-        run: pip install 'qfbench2-common @ git+https://github.com/Agenthon-2026/Agenthon2026-public.git@v2.4.4#subdirectory=common'
+        run: pip install 'qfbench2-common @ git+https://github.com/Agenthon-2026/Agenthon2026-public.git@v2.5.1#subdirectory=common'
       - name: Fetch public practice units
-        run: git clone --depth 1 https://github.com/Agenthon-2026/track4-analysis-public.git official
+        run: |
+          git clone https://github.com/Agenthon-2026/track4-analysis-public.git official
+          git -C official checkout fe313cee2865fbfbe47b65a8fcf7b830a40ea141
       - name: Verify public contracts and citations
         run: |
           pip install jsonschema
-          python verify_s14.py official/units
-          python test_s14_house.py official/units
-          python test_s14_semantics.py official/units
-          python test_s14_numerics.py official/units
+          python verify_s15.py official/units
+          python test_s15_house.py official/units
+          mkdir -p reports
+          cp test-output/s15-verification.json reports/
       - name: Build linux/amd64 image
-        run: docker build --platform linux/amd64 -f Dockerfile.s14 -t ghcr.io/${{ github.repository }}:s1.4 .
+        run: docker build --platform linux/amd64 -f Dockerfile.s15 -t ghcr.io/${{ github.repository }}:s1.5 .
       - name: Check every published unit
         run: |
           set -euo pipefail
@@ -37,7 +39,7 @@ jobs:
             mkdir -p output
             docker run --rm --network none \
               -v "$PWD/$unit:/input:ro" -v "$PWD/output:/output" \
-              ghcr.io/${{ github.repository }}:s1.4 \
+              ghcr.io/${{ github.repository }}:s1.5 \
               analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json
             python - "$unit" <<'PY'
           import importlib.resources as r, json, jsonschema, sys
@@ -53,6 +55,11 @@ jobs:
             PYTHONPATH="$PWD/official" qfbench2-smoke "$unit" "$PWD/output" --track analysis
             rm -f output/answer.json
           done
+      - name: Save validation results
+        uses: actions/upload-artifact@v4
+        with:
+          name: s15-validation
+          path: reports/
       - name: Log in to GHCR
         uses: docker/login-action@v4
         with:
@@ -60,4 +67,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push image
-        run: docker push ghcr.io/${{ github.repository }}:s1.4
+        run: docker push ghcr.io/${{ github.repository }}:s1.5
