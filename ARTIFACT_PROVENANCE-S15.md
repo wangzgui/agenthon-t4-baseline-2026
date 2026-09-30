@@ -1,4 +1,4 @@
-# S1.6 artifact provenance
+# S1.5 artifact provenance
 
 No resolved competition outcomes, answer lookup, external datasets or neural checkpoints are bundled. All local fitting, selection and residual estimation use dated tables in the current task's official, pre-cutoff corpus. Corpus publication date and observation date must both satisfy task.cutoff_date. No inference internet access is added.
 
@@ -17,11 +17,6 @@ EPS proxies require an explicitly quarterly, year-over-year reported diluted-EPS
 Source eligibility reads entity_ids/shared from official manifests. Source claims are exact quotes from eligible entity/shared documents. The task table is reconstructed exactly as the scorer defines it, with row-scoped offsets, and is available as an honest feature citation or fallback. No empty claims array or arbitrary different-company padding is emitted.
 
 ## House and reproducibility
-The organizer's MODEL_NAME is passed unchanged to its House endpoint. The descriptor retains the registered House disclosure nvidia/nemotron-3-super-120b-a12b / rl-030326-fp8 (base training cutoff unpublished); deployment model identity is organizer controlled. There are at most 25 calls/unit, 4000 output tokens/call, temperature 0, fixed seeds. No retries add calls. The image is standard-library Python, Linux amd64.
+The organizer's MODEL_NAME is passed unchanged to its House endpoint. The descriptor retains the registered House disclosure nvidia/nemotron-3-super-120b-a12b / rl-030326-fp8 (base training cutoff unpublished); deployment model identity is organizer controlled. There are at most 25 calls/unit, 4000 output tokens/call, temperatures 0/0.2, fixed seeds. No retries add calls. The image is standard-library Python, Linux amd64.
 
 Official validation: toolkit v2.5.1; Track 4 commit fe313cee2865fbfbe47b65a8fcf7b830a40ea141 (scorer 5.2.1). Public examples validate interface and source integrity, not hidden-task accuracy. Sources: official unit corpus under its supplied licenses; local code MIT. No external training artifact is bundled.
-
-## S1.6 facts and decisions
-Target/driver queries retrieve diversified, entity-owned passages with cached term statistics. A House extraction pass produces at most three provisional facts per row. Quotes and offsets are verified against the supplied passages; metric/period/unit interpretations remain provisional. No new historical labels or external training sources are introduced.
-Regression prior weights use dimensionless validation improvement relative to the persistence MAE; zero selection origins imply zero validated weight. Canonical-unit conversion is idempotent, and inconsistent direct/derived quantities trigger a conservative prior blend and uncertainty guard. Numeric/ranking forecasts may receive one draft review; only quoted, finite, unit-consistent revisions are accepted. Ranking uses a coherent whole-table revision. Draft/review disagreement is a heuristic uncertainty term, not independent ensemble calibration. Classification policy is inherited from S1.5.
-Request scheduling caps calls at 25 per unit and uses a 480-second agent deadline. Large tables share the full roster and may receive fewer extraction/review passes. Transport failure falls back to local facts and inherited forecasts. Interface tests do not establish predictive improvement or a production NLI pass rate.

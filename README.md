@@ -1,23 +1,13 @@
-## Executive summary (read this first)
+# Agenthon Track 4 S1.6
 
-S1.5 is a general-purpose Agenthon Track 4 submission. It runs the
-organizer-hosted House model when available and cites passages retrieved from
-the task's frozen, cutoff-filtered corpus. A lightweight numerical rule is
-fitted and selected from historical observations already in that corpus when
-rolling-origin validation supports it. This is a forecast prior, not a claim
-that the unpublished outcome is known. Tasks without adequate historical
-observations retain a deterministic contract-safe fallback. S1.5 adds
-recency-weighted rank validation, a small House forecast ensemble, and
-entity-matched, cutoff-safe financial statement EPS arithmetic.
-The code adapts the MIT-licensed strong RAG scaffold from the official public
-Track 4 repository, with its license copied to `UPSTREAM_LICENSE`.
+A cutoff-filtered financial forecasting agent using the organizer House endpoint and standard-library statistical priors.
 
-Build: `docker build --platform linux/amd64 -f Dockerfile.s15 -t agenthon-t4-baseline:s1.5 .`
+S1.6 adds target/driver retrieval, source-verified structured facts, dimensionless regression fusion, canonical unit conflict checks, and evidence-anchored draft review. Existing time-split residual intervals and quarterly EPS parsing are retained. No resolved competition labels, external training datasets or checkpoints are bundled.
 
-Run: `docker run --rm -v UNIT:/input:ro -v OUT:/output agenthon-t4-baseline:s1.5 analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json`
+Build: `docker build --platform linux/amd64 -f Dockerfile.s16 -t agenthon-t4-baseline:s1.6 .`
 
-`ARTIFACT_PROVENANCE.md` records the cutoff checks and model disclosure.
-`RESEARCH-S15.md` records experiments, sources, and limits.
+Run: `docker run --rm -v UNIT:/input:ro -v OUT:/output agenthon-t4-baseline:s1.6 analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json`
 
-The GitHub workflow validates all published practice unit shapes on Linux and
-then publishes the image to GHCR. No Team Key is stored in this repository.
+See `ARTIFACT_PROVENANCE.md` for model/cutoff disclosure and `RESEARCH-S16.md` for validation and limitations. GitHub Actions verifies the agent and publishes its Linux amd64 image to GHCR. The submission ZIP references that immutable image and includes a signed team claim; it does not contain a Team Key.
+
+Adapted from the official MIT Track 4 scaffold; upstream license is in `UPSTREAM_LICENSE`.

@@ -1,4 +1,4 @@
-name: Build and publish T4 S1.5
+name: Build and publish T4 S1.6
 
 on:
   workflow_dispatch:
@@ -25,12 +25,12 @@ jobs:
       - name: Verify public contracts and citations
         run: |
           pip install jsonschema
-          python verify_s15.py official/units
-          python test_s15_house.py official/units
+          python verify_s16.py official/units
+          python test_s16_house.py official/units
           mkdir -p reports
-          cp test-output/s15-verification.json reports/
+          cp test-output/s16-verification.json reports/
       - name: Build linux/amd64 image
-        run: docker build --platform linux/amd64 -f Dockerfile.s15 -t ghcr.io/${{ github.repository }}:s1.5 .
+        run: docker build --platform linux/amd64 -f Dockerfile.s16 -t ghcr.io/${{ github.repository }}:s1.6 .
       - name: Check every published unit
         run: |
           set -euo pipefail
@@ -39,7 +39,7 @@ jobs:
             mkdir -p output
             docker run --rm --network none \
               -v "$PWD/$unit:/input:ro" -v "$PWD/output:/output" \
-              ghcr.io/${{ github.repository }}:s1.5 \
+              ghcr.io/${{ github.repository }}:s1.6 \
               analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json
             python - "$unit" <<'PY'
           import importlib.resources as r, json, jsonschema, sys
@@ -58,7 +58,7 @@ jobs:
       - name: Save validation results
         uses: actions/upload-artifact@v4
         with:
-          name: s15-validation
+          name: s16-validation
           path: reports/
       - name: Log in to GHCR
         uses: docker/login-action@v4
@@ -67,4 +67,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push image
-        run: docker push ghcr.io/${{ github.repository }}:s1.5
+        run: docker push ghcr.io/${{ github.repository }}:s1.6
