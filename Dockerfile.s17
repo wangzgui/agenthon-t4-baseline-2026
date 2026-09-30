@@ -1,0 +1,12 @@
+FROM python:3.13-slim
+LABEL qfbench2.interface_version="2.0"
+WORKDIR /app
+COPY agent_s17.py /app/agent_s17.py
+COPY s17_semantics.py /app/s17_semantics.py
+COPY s17_numerics.py /app/s17_numerics.py
+COPY s17_fundamentals.py /app/s17_fundamentals.py
+COPY s17_calibration.py /app/s17_calibration.py
+COPY s17_facts.py /app/s17_facts.py
+COPY s17_decision.py /app/s17_decision.py
+COPY s17_reasoning.py /app/s17_reasoning.py
+ENTRYPOINT ["python", "/app/agent_s17.py"]

@@ -1,0 +1,13 @@
+## Executive summary (read this first)
+S1.6 scored 0.4793, as reported by the participant. S1.7 has no official score yet. This version focuses on usable source quantities, checked arithmetic and forecast selection, while adding the Final reasoning field. No public outcomes or task-specific leaderboard constants are used. Functional checks establish interface and source integrity, not hidden-task accuracy.
+
+## Changes
+Literal quote/value/metric/period anchors gate numerical comparisons. Unsupported quantities and incompatible period/basis/unit pairs do not enter arithmetic. Checked observations inform House forecasts but are not silently reused as future targets. Optional baseline/event decompositions must reconcile to the canonical point. A cited review needs a linked revision explanation; ranking retains a coherent complete forecast set. Historical priors with zero validation gain lose their heuristic blending weight. Explicit unit conversion now also converts interval endpoints. Existing residual bands are retained; full-pipeline calibration remains future work.
+
+## Final reasons
+Up to three distinct supported mechanisms are selected. Premises are exact eligible corpus quotes; implications use the actual fused point/label. A sign change drops a stale mechanism. Reasons use corpus citations rather than task-table citations, adhere to conservative compact-JSON byte caps, and avoid grader-control text. Offline causal/target-reason quality remains unmeasured. Missing model reasons are omitted rather than fabricated.
+
+## Evidence and limits
+Official reference commit ede7381d8c1ba9d8c84068f9d142f5e093a33892, scorer 5.2.2, toolkit v2.5.1. Eleven practice units and 78 rows are checked for schema, ownership and exact quotes. Dedicated tests check hallucinated value rejection, incompatible basis/period rejection, decomposition conflicts, interval unit invariance and the actual official submitted-reasons checker. POSIX-only official deterministic claim checks run in Linux CI; they do not include production NLI. House transport is mocked locally; no live House prediction or reasoning score is claimed.
+
+Period and metric matching is conservative literal matching, so some usable facts are intentionally left uncomputed. Statistical/House fusion still lacks full blended out-of-time validation. Review is dependent on the first draft. Three unit-level reasons cannot necessarily cover every entity mechanism. The answer-byte cap can exclude reasons on very large rosters. No guarantee of 0.55 or hidden-family improvement is made; selection/calibration data must remain pre-cutoff with source provenance.

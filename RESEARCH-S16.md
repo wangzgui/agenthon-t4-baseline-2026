@@ -1,6 +1,6 @@
 # S1.6 experiment record
 
-Observed CodaBench score supplied by the participant: S1.5 = 0.4463. S1.6 score is not yet available. The aggregate score alone cannot identify per-task gains, and pre-S1.4 scores used a different scoring regime.
+Observed CodaBench score supplied by the participant: S1.5 = 0.4463. S1.6 = 0.4793 (participant report, 2026-10-01). Gain over S1.5: +0.0330 leaderboard points; per-unit diagnostics unavailable. The aggregate score alone cannot identify per-task gains, and pre-S1.4 scores used a different scoring regime.
 
 ## Changes and hypotheses
 - Target/driver query coverage should supply more useful facts than one repeated keyword query; entity ownership is checked before retrieval.
