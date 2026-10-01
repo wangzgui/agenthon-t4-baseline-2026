@@ -1,13 +1,10 @@
-# Agenthon Track 4 S1.7
+## Executive summary (read this first)
+S1.8 is a controlled retrieval experiment built on S1.6. The numerical and House prediction path remains the S1.6 path. A bounded second pass adds eligible corpus evidence when task-derived keyword needs are not covered. Optional local diagnostics expose retrieval, model completion and numerical decisions without modifying predictions. No outcome lookup, extra model or external inference corpus is used.
 
-A cutoff-filtered financial forecasting agent using the organizer House endpoint and standard-library statistical priors.
+Build: `docker build --platform linux/amd64 -f Dockerfile.s18 -t agenthon-t4-baseline:s1.8 .`
 
-S1.7 adds literal-source quantities, checked observed comparisons, forecast decomposition validation, supported draft selection, and bounded Final submitted_reasons tied to the normalized answer. Existing time-split residual intervals and quarterly EPS parsing are retained. No resolved competition labels, external training datasets or checkpoints are bundled.
+Run: `docker run --rm -v UNIT:/input:ro -v OUT:/output agenthon-t4-baseline:s1.8 analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json`
 
-Build: `docker build --platform linux/amd64 -f Dockerfile.s17 -t agenthon-t4-baseline:s1.7 .`
+Local control: set `AGENTHON_SUPPLEMENT_RETRIEVAL=0`. Local trace: set `AGENTHON_DIAGNOSTICS_DIR` to your local output directory. It is off by default on the platform. `test_s18_diagnostics.py OFFICIAL_REPO` checks that the control generates identical S1.6 model requests and predictions under the same mock replies.
 
-Run: `docker run --rm -v UNIT:/input:ro -v OUT:/output agenthon-t4-baseline:s1.7 analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json`
-
-See `ARTIFACT_PROVENANCE.md` for model/cutoff disclosure and `RESEARCH-S17.md` for validation and limitations. GitHub Actions verifies the agent and publishes its Linux amd64 image to GHCR. The submission ZIP references that immutable image and includes a signed team claim; it does not contain a Team Key.
-
-Adapted from the official MIT Track 4 scaffold; upstream license is in `UPSTREAM_LICENSE`.
+See `RESEARCH-S18.md` and `ARTIFACT_PROVENANCE.md`. The signed submission ZIP references the published image by immutable digest. The original S1.6 ZIP remains the scored control (0.4793). Upstream MIT license: `UPSTREAM_LICENSE`.

@@ -1,0 +1,12 @@
+{
+  "active_version": "s1.6",
+  "reported_score": 0.4793,
+  "submission_zip": "submission-s1.6.zip",
+  "image_digest": "sha256:672beb1bdbcc1d4fafae28b5483c32deb640bd260d247e0ee18bc2f8ac3a5006",
+  "source_commit": "af764681a9befa1d2a88c17534a31a5c48b2149a",
+  "rejected_candidate": {
+    "version": "s1.7",
+    "reported_score": 0.4787
+  },
+  "rollback_scope": "local default build and documentation; original signed ZIP unchanged; no CodaBench upload or GitHub push"
+}
