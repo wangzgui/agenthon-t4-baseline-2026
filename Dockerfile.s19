@@ -1,0 +1,4 @@
+FROM python:3.13-slim
+WORKDIR /app
+COPY agent_s19.py s19_semantics.py s19_numerics.py s19_fundamentals.py s19_calibration.py s19_facts.py s19_decisions.py s19_reasoning.py s19_diagnostics.py /app/
+ENTRYPOINT ["python", "/app/agent_s19.py"]
