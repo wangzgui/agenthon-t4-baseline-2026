@@ -25,7 +25,8 @@ def review_admission(draft, review, passages):
     if b is None:return False,'missing_finite_review'
     if a is None:return True,'recover_missing_draft_with_quote_check'
     if abs(a-b)<=1e-6*max(1,abs(a),abs(b)):return True,'unchanged_numeric_point'
-    if review.get('correction_kind') not in {'unit','period','arithmetic','consistency','omitted_driver'}:
+    kind=review.get('correction_kind')
+    if not isinstance(kind,str) or kind not in {'unit','period','arithmetic','consistency','omitted_driver'}:
         return False,'missing_correction_kind'
     explanation=review.get('change_reason')
     if not isinstance(explanation,str) or not 40<=len(explanation)<=500:
@@ -38,7 +39,8 @@ def review_admission(draft, review, passages):
     if not isinstance(quote,str) or not 20<=len(quote)<=280 or not isinstance(eid,str) or not re.fullmatch(r'E\d+',eid):
         return False,'invalid_mechanism_premise'
     i=int(eid[1:])
-    if i>=len(passages) or quote not in passages[i].text or eid not in review.get('evidence_ids',[]):
+    ids=review.get('evidence_ids')
+    if not isinstance(ids,list) or i>=len(passages) or quote not in passages[i].text or eid not in ids:
         return False,'unanchored_mechanism_premise'
     if mechanism.strip()==quote.strip() or explanation.strip()==quote.strip():
         return False,'observation_without_decision_explanation'

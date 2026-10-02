@@ -1,4 +1,4 @@
-"""Agenthon Track 4 S1.6: cutoff-safe statistical priors plus House reasoning.
+"""Agenthon Track 4 S1.9.1: cutoff-safe statistical priors plus House reasoning.
 
 No family names or public unit identifiers drive predictions.  The only remote
 dependency is the organizer-provided House model.  When it is unavailable, a
@@ -507,7 +507,8 @@ def review_or_medoid(task,batch,options):
                 index=int(evidence_id[1:])
                 if index<len(passages) and quote and quote in passages[index].text:
                     anchored=True
-        decision_ok, decision_status = review_admission(first.get(eid), raw, passages)
+        decision_ok, decision_status = (review_admission(first.get(eid), raw, passages)
+                                       if valid and anchored else (False,'missing_or_invalid_quote_or_unit'))
         accepted.append(valid and anchored and decision_ok)
         selected=raw if valid and anchored and decision_ok else first.get(eid)
         emit(task, 'review_selection', {'entity_id':eid,'draft':forecast(first.get(eid)),
@@ -533,6 +534,11 @@ def canonical_prediction(task,entity,raw):
     meaning=infer(task)
     point=finite(raw.get('point_forecast'))
     declared=raw.get('point_unit')
+    if declared is not None and not isinstance(declared,str):
+        # House JSON is untrusted: an object/list unit must not reach a dict lookup.
+        declared=None
+        point=None
+        raw['_unit_conflict']=True
     aliases={'%':'pct','percent':'pct','percentage_points':'pct','bp':'bps','basis_points':'bps','USD':'usd'}
     unit=aliases.get(declared,declared)
     direct_explicit=unit==meaning.unit
@@ -847,7 +853,14 @@ def run(task_path: Path, corpus_path: Path, out_path: Path) -> dict:
                 futures={pool.submit(function,i):i for i in indices if time.monotonic()<task['_deadline']-2}
                 house_calls+=len(futures)
                 for future in concurrent.futures.as_completed(futures):
-                    result[futures[future]]=future.result() or []
+                    try:
+                        result[futures[future]]=future.result() or []
+                    except Exception as exc:
+                        # One failed House batch must not abort the entire unit.
+                        result[futures[future]]=[]
+                        emit(task,'house_batch_failure',{'batch':futures[future],
+                                                         'exception_type':type(exc).__name__})
+                        print('House batch failed:',type(exc).__name__,flush=True)
             return result
         extracted=phase(lambda i:house_extract(task,batches[i]),range(extract_count))
         fact_calls=len(extracted)
@@ -890,7 +903,7 @@ def run(task_path: Path, corpus_path: Path, out_path: Path) -> dict:
         "schema_version": "3",
         "target_type": task_spec(task)[0],
         "entity_predictions": rows,
-        "notes": {"agent": "agenthon-t4-baseline-s1.9", "house_requests": house_calls,
+        "notes": {"agent": "agenthon-t4-baseline-s1.9.1", "house_requests": house_calls,
                   "model_rows": len(house_results), "historical_prior": fitted.model if fitted else "none",
                   "prior_examples": fitted.examples if fitted else 0,
                   "statement_prior_rows": len(fundamentals),

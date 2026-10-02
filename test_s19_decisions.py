@@ -23,6 +23,18 @@ def main():
     for key,value in [('premise_quote','Revenue increased by 99 percent.'),('evidence_id','E999')]:
         broken=dict(review,reason=dict(review['reason'],**{key:value}))
         assert review_or_medoid(t,batch,[[draft],[broken]])[0]['point_forecast']==1.0
+    # Reproduced pre-fix crash: a JSON array correction_kind was hashed in a set.
+    for field,values in [('correction_kind',[[],{},None,3,True]),
+                         ('evidence_ids',[None,{},'E0',3]),
+                         ('reason',[None,[],3,'not an object']),
+                         ('change_reason',[None,[],{},3])]:
+        for value in values:
+            broken=dict(review,**{field:value})
+            assert review_or_medoid(t,batch,[[draft],[broken]])[0]['point_forecast']==1.0
+    from agent_s19 import canonical_prediction
+    for value in [[],{},3,True]:
+        broken=canonical_prediction(t,{'entity_id':'X'},dict(draft,point_unit=value))
+        assert broken['_unit_conflict'] and 'point_forecast' not in broken
     # Whole-roster coherence: partial corrections cannot splice ranking scales.
     rank=dict(t,target={'type':'ranking','name':'revenue_growth_pct'})
     batch2=batch+[(1,{'entity_id':'Y'},[p])]

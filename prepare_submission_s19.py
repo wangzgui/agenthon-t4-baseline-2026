@@ -41,18 +41,18 @@ def main() -> None:
         "access": "api",
     }, {
         "name": "s19-cutoff-corpus-statistical-and-statement-priors",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "revision": "sha256:" + local_revision,
         "training_cutoff": "per-unit task.cutoff_date; supplied frozen corpus only",
         "access": "local",
     }]
     descriptor["license"] = "MIT"
     key = validate_team_key(sys.stdin.readline().rstrip("\r\n"))
-    archive = root / "submission-s1.9.zip"
+    archive = root / "submission-s1.9.1.zip"
     pack_submission(descriptor, TEAM_NUMBER, key, archive)
     with zipfile.ZipFile(archive) as zf:
         assert set(zf.namelist()) == {"submission.json", "team-claim.json"}
-        (root / "submission-s1.9.json").write_bytes(zf.read("submission.json"))
+        (root / "submission-s1.9.1.json").write_bytes(zf.read("submission.json"))
     print(f"Packed {archive}; Team Key excluded")
 
 

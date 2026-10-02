@@ -1,4 +1,4 @@
-name: Build and publish T4 S1.9
+name: Build and publish T4 S1.9.1
 
 on:
   workflow_dispatch:
@@ -28,10 +28,11 @@ jobs:
           python verify_s19.py official/units
           python test_s19_house.py official/units
           python test_s19_decisions.py
+          python test_s19_runtime_faults.py official/units
           mkdir -p reports
-          cp test-output/s19-verification.json reports/
+          cp test-output/s19-verification.json test-output/s19-runtime-faults.json reports/
       - name: Build linux/amd64 image
-        run: docker build --platform linux/amd64 -f Dockerfile.s19 -t ghcr.io/${{ github.repository }}:s1.9 .
+        run: docker build --platform linux/amd64 -f Dockerfile.s19 -t ghcr.io/${{ github.repository }}:s1.9.1 .
       - name: Check every published unit
         run: |
           set -euo pipefail
@@ -40,7 +41,7 @@ jobs:
             mkdir -p output
             docker run --rm --network none \
               -v "$PWD/$unit:/input:ro" -v "$PWD/output:/output" \
-              ghcr.io/${{ github.repository }}:s1.9 \
+              ghcr.io/${{ github.repository }}:s1.9.1 \
               analyze --task /input/task.json --corpus /input/corpus --out /output/answer.json
             python - "$unit" <<'PY'
           import importlib.resources as r, json, jsonschema, sys
@@ -59,7 +60,7 @@ jobs:
       - name: Save validation results
         uses: actions/upload-artifact@v4
         with:
-          name: s19-validation
+          name: s191-validation
           path: reports/
       - name: Log in to GHCR
         uses: docker/login-action@v4
@@ -68,4 +69,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push image
-        run: docker push ghcr.io/${{ github.repository }}:s1.9
+        run: docker push ghcr.io/${{ github.repository }}:s1.9.1
